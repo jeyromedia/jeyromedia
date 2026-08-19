@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEYRO0 — Premium Video Editing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Bebas+Neue&family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ===== TOKENS ===== */
+:root {
+  --ink:     #07070a;
+  --surface: #0f0f15;
+  --raised:  #161622;
+  --border:  rgba(255,255,255,0.07);
+  --neon:    #9f7aea;
+  --ice:     #38bdf8;
+  --smoke:   #64748b;
+  --mist:    #94a3b8;
+  --white:   #f1f5f9;
+  --g-main:  linear-gradient(135deg,#9f7aea,#38bdf8);
+  --g-text:  linear-gradient(90deg,#c4b5fd,#67e8f9);
+  --shadow-neon: 0 0 0 1px rgba(159,122,234,.35), 0 20px 60px rgba(0,0,0,.6);
+  --r: 14px;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--ink);color:var(--white);overflow-x:hidden;line-height:1.6}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+button{font-family:inherit;cursor:pointer}
+
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--ink)}
+::-webkit-scrollbar-thumb{background:var(--neon);border-radius:10px}
+
+/* ===== CURSOR GLOW ===== */
+.cursor-glow{
+  position:fixed;width:480px;height:480px;border-radius:50%;
+  background:radial-gradient(circle,rgba(159,122,234,.065) 0%,transparent 70%);
+  pointer-events:none;z-index:9999;transform:translate(-50%,-50%);
+  transition:left .12s ease,top .12s ease;
+}
+
+/* ===== NAV ===== */
+.nav{
+  position:fixed;inset-block-start:0;inset-inline:0;z-index:1000;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1.1rem 2.5rem;
+  background:rgba(7,7,10,.72);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  border-bottom:1px solid var(--border);
+  transition:padding .3s;
+}
+.nav.stuck{padding:.7rem 2.5rem}
+.nav__logo{
+  font-family:'Orbitron',monospace;font-weight:900;font-size:1.4rem;
+  letter-spacing:.08em;background:var(--g-text);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.nav__links{display:flex;gap:2.5rem}
+.nav__links a{
+  font-size:.78rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--mist);transition:color .2s;
+}
+.nav__links a:hover{color:var(--white)}
+.nav__right{display:flex;align-items:center;gap:1rem}
+
+/* Language switcher */
+.lang{
+  display:flex;background:rgba(255,255,255,.05);border:1px solid var(--border);
+  border-radius:100px;padding:3px;gap:2px;
+}
+.lang__btn{
+  border:none;background:none;color:var(--smoke);font-size:.68rem;font-weight:700;
+  letter-spacing:.08em;padding:4px 11px;border-radius:100px;transition:all .25s;
+  text-transform:uppercase;
+}
+.lang__btn:hover:not(.active){color:var(--mist)}
+.lang__btn.active{background:var(--g-main);color:#fff}
+
+.nav__ham{
+  display:none;flex-direction:column;gap:5px;background:none;border:none;padding:4px;
+}
+.nav__ham span{
+  display:block;width:22px;height:1.5px;background:var(--mist);
+  border-radius:2px;transition:.3s;
+}
+
+/* ===== HERO ===== */
+.hero{
+  min-height:100svh;display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;padding:7rem 2rem 5rem;
+}
+.hero__grid{
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(159,122,234,.085) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(159,122,234,.085) 1px,transparent 1px);
+  background-size:52px 52px;
+  -webkit-mask-image:radial-gradient(ellipse 78% 78% at 50% 50%,black 0%,transparent 100%);
+  mask-image:radial-gradient(ellipse 78% 78% at 50% 50%,black 0%,transparent 100%);
+}
+.hero__orb{position:absolute;border-radius:50%;filter:blur(100px);pointer-events:none}
+.hero__orb--a{
+  width:700px;height:700px;background:rgba(159,122,234,.11);
+  top:-260px;left:-220px;animation:orbA 14s ease-in-out infinite;
+}
+.hero__orb--b{
+  width:520px;height:520px;background:rgba(56,189,248,.09);
+  bottom:-160px;right:-120px;animation:orbB 18s ease-in-out infinite;
+}
+@keyframes orbA{0%,100%{transform:translate(0,0)}50%{transform:translate(50px,-40px)}}
+@keyframes orbB{0%,100%{transform:translate(0,0)}50%{transform:translate(-40px,30px)}}
+
+.hero__content{
+  text-align:center;position:relative;z-index:2;
+  max-width:860px;width:100%;
+}
+.hero__eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid rgba(159,122,234,.38);background:rgba(159,122,234,.08);
+  border-radius:100px;padding:6px 18px;
+  font-size:.72rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--neon);margin-bottom:2rem;
+  animation:fadeDown .7s ease both;
+}
+.hero__eyebrow::before{
+  content:'';width:5px;height:5px;border-radius:50%;background:var(--neon);
+  animation:blip 2s ease infinite;
+}
+@keyframes blip{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.65)}}
+
+.hero__brand{
+  font-family:'Orbitron',monospace;font-weight:900;
+  font-size:clamp(4rem,11vw,9rem);line-height:.95;letter-spacing:-.02em;
+  background:var(--g-text);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:fadeDown .7s ease .1s both;
+}
+.hero__tagline{
+  font-family:'Rajdhani',sans-serif;font-size:clamp(1rem,3vw,1.5rem);font-weight:700;
+  letter-spacing:.3em;text-transform:uppercase;color:var(--mist);
+  margin-top:.75rem;margin-bottom:1.5rem;
+  animation:fadeDown .7s ease .2s both;
+}
+.hero__desc{
+  color:var(--mist);font-size:1rem;line-height:1.75;max-width:540px;
+  margin:0 auto 2.5rem;animation:fadeDown .7s ease .3s both;
+}
+.hero__cta{
+  display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;
+  animation:fadeDown .7s ease .4s both;
+}
+
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.88rem 1.8rem;border-radius:8px;
+  font-size:.88rem;font-weight:600;letter-spacing:.06em;
+  border:none;transition:all .3s;
+}
+.btn--primary{background:var(--g-main);color:#fff}
+.btn--primary:hover{transform:translateY(-2px);box-shadow:0 14px 42px rgba(159,122,234,.45)}
+.btn--ghost{
+  background:rgba(255,255,255,.05);color:var(--mist);
+  border:1px solid var(--border);
+}
+.btn--ghost:hover{background:rgba(255,255,255,.09);color:var(--white);transform:translateY(-2px)}
+.btn--full{width:100%;justify-content:center}
+
+/* Stats */
+.hero__stats{
+  display:flex;justify-content:center;gap:4rem;margin-top:5rem;flex-wrap:wrap;
+  animation:fadeUp .7s ease .55s both;
+}
+.stat{text-align:center}
+.stat__num{
+  font-family:'Bebas Neue',cursive;font-size:3.2rem;line-height:1;
+  background:var(--g-text);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.stat__label{
+  font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--smoke);margin-top:4px;
+}
+
+.hero__scroll{
+  position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  opacity:.35;animation:fadeUp 1s ease 1.1s both;
+}
+.hero__scroll span{
+  display:block;width:1px;height:46px;
+  background:linear-gradient(to bottom,var(--neon),transparent);
+  animation:drawLine 2.2s ease infinite;
+}
+@keyframes drawLine{
+  0%{transform:scaleY(0);transform-origin:top}
+  49%{transform:scaleY(1);transform-origin:top}
+  50%{transform:scaleY(1);transform-origin:bottom}
+  100%{transform:scaleY(0);transform-origin:bottom}
+}
+
+/* ===== SECTION SHARED ===== */
+.section{padding:7rem 2.5rem}
+.section--alt{background:var(--surface)}
+.wrap{max-width:1200px;margin-inline:auto}
+.section__hd{margin-bottom:3.5rem}
+.section__label{
+  display:flex;align-items:center;gap:10px;
+  font-size:.7rem;font-weight:700;letter-spacing:.22em;
+  text-transform:uppercase;color:var(--ice);margin-bottom:.8rem;
+}
+.section__label::before{content:'';width:26px;height:1px;background:var(--ice);opacity:.55}
+.section__title{
+  font-family:'Orbitron',monospace;font-weight:800;
+  font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.15;margin-bottom:1rem;
+}
+.section__title em{
+  font-style:normal;background:var(--g-text);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.section__desc{color:var(--mist);font-size:.94rem;line-height:1.72;max-width:560px}
+
+/* ===== PRICING ===== */
+.pricing__grid{
+  display:grid;grid-template-columns:repeat(5,1fr);gap:1.25rem;
+}
+
+.pcard{
+  background:var(--raised);border:1px solid var(--border);border-radius:var(--r);
+  padding:1.75rem 1.5rem;position:relative;
+  display:flex;flex-direction:column;
+  opacity:0;transform:translateY(22px);
+  transition:opacity .5s,transform .35s,border-color .35s,box-shadow .35s;
+}
+.pcard.visible{opacity:1;transform:translateY(0)}
+.pcard.visible:hover{transform:translateY(-8px);border-color:rgba(159,122,234,.48);box-shadow:var(--shadow-neon)}
+
+/* top gradient line */
+.pcard::after{
+  content:'';position:absolute;inset-block-start:0;inset-inline:0;
+  height:2px;border-radius:var(--r) var(--r) 0 0;
+  background:var(--g-main);opacity:0;transition:opacity .35s;
+}
+.pcard.visible:hover::after,.pcard--feat::after{opacity:1}
+
+/* render bar — signature detail */
+.pcard::before{
+  content:'';position:absolute;inset-block-end:0;inset-inline-start:0;
+  height:2px;width:0%;background:var(--g-main);opacity:.5;
+  border-radius:0 0 0 var(--r);
+  transition:width .6s ease;
+}
+.pcard.visible:hover::before{width:100%}
+
+/* Featured */
+.pcard--feat{
+  border-color:rgba(159,122,234,.42);
+  background:linear-gradient(158deg,rgba(159,122,234,.09) 0%,rgba(56,189,248,.04) 100%);
+  box-shadow:0 0 28px rgba(159,122,234,.15);
+}
+.pcard--feat.visible:hover{
+  box-shadow:0 0 0 1px rgba(159,122,234,.52),0 28px 80px rgba(0,0,0,.7),0 0 50px rgba(159,122,234,.22);
+}
+
+.pcard__badge{
+  display:inline-block;background:var(--g-main);color:#fff;
+  font-size:.62rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  padding:3px 10px;border-radius:100px;margin-bottom:1rem;align-self:flex-start;
+}
+.pcard__icon{font-size:1.8rem;margin-bottom:.9rem;display:block}
+.pcard__name{
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.05rem;
+  letter-spacing:.04em;margin-bottom:.3rem;
+}
+.pcard__desc{font-size:.78rem;color:var(--smoke);margin-bottom:1.2rem;line-height:1.5}
+.pcard__price{display:flex;align-items:baseline;gap:3px;margin-bottom:1.2rem}
+.pcard__cur{font-size:1.1rem;font-weight:600;color:var(--ice);margin-top:4px}
+.pcard__num{font-family:'Bebas Neue',cursive;font-size:3.2rem;line-height:1;color:var(--white)}
+.pcard__feats{flex-grow:1;display:flex;flex-direction:column;gap:.42rem;margin-bottom:1.4rem}
+.pcard__feats li{
+  display:flex;align-items:center;gap:8px;
+  font-size:.79rem;color:var(--mist);
+}
+.pcard__feats li::before{
+  content:'✦';color:var(--ice);font-size:.52rem;flex-shrink:0;
+}
+.pcard__btn{
+  width:100%;padding:.75rem;border-radius:8px;
+  font-size:.83rem;font-weight:600;letter-spacing:.08em;
+  background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--white);
+  transition:all .3s;margin-top:auto;
+}
+.pcard__btn:hover{
+  background:var(--g-main);border-color:transparent;
+  box-shadow:0 8px 28px rgba(159,122,234,.4);transform:translateY(-1px);
+}
+.pcard--feat .pcard__btn{background:var(--g-main);border-color:transparent}
+.pcard--feat .pcard__btn:hover{box-shadow:0 10px 36px rgba(159,122,234,.55);transform:translateY(-2px)}
+
+/* ===== TICKER ===== */
+.ticker{
+  overflow:hidden;border-block:1px solid var(--border);
+  padding:.85rem 0;margin-top:3.5rem;
+  -webkit-mask-image:linear-gradient(90deg,transparent,black 10%,black 90%,transparent);
+  mask-image:linear-gradient(90deg,transparent,black 10%,black 90%,transparent);
+}
+.ticker__track{
+  display:flex;gap:2.5rem;white-space:nowrap;
+  animation:tickerSlide 22s linear infinite;width:max-content;
+}
+.ticker__item{
+  display:flex;align-items:center;gap:2.5rem;
+  font-size:.68rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--smoke);
+}
+.ticker__dot{
+  width:3px;height:3px;border-radius:50%;
+  background:var(--neon);opacity:.7;flex-shrink:0;
+}
+@keyframes tickerSlide{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ===== ABOUT — improved ===== */
+.about__grid{display:grid;grid-template-columns:1fr 1.2fr;gap:5rem;align-items:center}
+.ab__card{
+  position:relative;background:var(--raised);
+  border:1px solid rgba(159,122,234,.3);border-radius:20px;
+  padding:2.5rem;overflow:hidden;
+  box-shadow:0 0 60px rgba(159,122,234,.1);
+}
+.ab__card::before{
+  content:'';position:absolute;inset-block-start:0;inset-inline:0;
+  height:2px;background:var(--g-main);
+}
+.ab__card-glow{
+  position:absolute;width:300px;height:300px;border-radius:50%;
+  background:rgba(159,122,234,.07);filter:blur(60px);
+  top:-80px;right:-80px;pointer-events:none;
+}
+.ab__mono{
+  width:90px;height:90px;border-radius:18px;
+  background:var(--g-main);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',monospace;font-weight:900;font-size:2.4rem;
+  color:#fff;margin-bottom:1.5rem;
+  box-shadow:0 12px 36px rgba(159,122,234,.35);
+}
+.ab__card-name{
+  font-family:'Orbitron',monospace;font-weight:900;font-size:1.5rem;
+  background:var(--g-text);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:.2rem;
+}
+.ab__card-role{font-size:.78rem;color:var(--smoke);letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.5rem}
+.ab__tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem}
+.ab__tag{
+  font-size:.7rem;font-weight:600;letter-spacing:.06em;
+  padding:.3rem .7rem;border-radius:6px;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--mist);
+}
+.ab__divider{height:1px;background:var(--border);margin-bottom:1.25rem}
+.ab__stats-row{display:flex;gap:2rem}
+.ab__stat-item{text-align:center}
+.ab__stat-n{
+  font-family:'Bebas Neue',cursive;font-size:1.9rem;line-height:1;
+  background:var(--g-text);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.ab__stat-l{font-size:.64rem;color:var(--smoke);letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.ab__status{
+  display:inline-flex;align-items:center;gap:.5rem;
+  margin-top:1.25rem;background:rgba(34,197,94,.08);
+  border:1px solid rgba(34,197,94,.25);border-radius:100px;
+  padding:.35rem .9rem;font-size:.72rem;font-weight:600;color:#4ade80;
+}
+.ab__status-dot{
+  width:6px;height:6px;border-radius:50%;background:#22c55e;
+  box-shadow:0 0 8px #22c55e;animation:blip 2s ease infinite;
+}
+.about__bio{color:var(--mist);font-size:.95rem;line-height:1.78;margin-bottom:2rem}
+.about__spec{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:.65rem;margin-bottom:2rem;
+}
+.about__spec-item{
+  display:flex;align-items:center;gap:.6rem;
+  background:var(--raised);border:1px solid var(--border);border-radius:8px;
+  padding:.6rem .85rem;font-size:.8rem;font-weight:500;color:var(--mist);
+  transition:border-color .25s,color .25s;
+}
+.about__spec-item:hover{border-color:rgba(159,122,234,.38);color:var(--white)}
+.about__spec-icon{font-size:1rem}
+
+/* ===== HOW IT WORKS ===== */
+.process__grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:0;position:relative;
+}
+.process__connector{
+  position:absolute;top:2.6rem;left:calc(100%/6);
+  width:calc(100% - 100%/3);height:1px;
+  background:linear-gradient(90deg,transparent,rgba(159,122,234,.5) 20%,rgba(56,189,248,.5) 80%,transparent);
+  z-index:0;
+}
+@media(max-width:700px){.process__connector{display:none}}
+.process__step{
+  padding:2.5rem 2rem;text-align:center;position:relative;z-index:1;
+  opacity:0;transform:translateY(22px);
+  transition:opacity .6s,transform .6s;
+}
+.process__step.visible{opacity:1;transform:translateY(0)}
+.process__step:nth-child(2).visible{transition-delay:.15s}
+.process__step:nth-child(3).visible{transition-delay:.3s}
+.process__num{
+  font-family:'Bebas Neue',cursive;font-size:5rem;line-height:1;
+  background:var(--g-text);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  opacity:.25;margin-bottom:.75rem;display:block;
+}
+.process__icon{
+  width:56px;height:56px;border-radius:14px;
+  background:rgba(159,122,234,.1);border:1px solid rgba(159,122,234,.28);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.5rem;margin:0 auto 1rem;
+  transition:all .3s;
+}
+.process__step:hover .process__icon{
+  background:var(--g-main);border-color:transparent;
+  box-shadow:0 8px 28px rgba(159,122,234,.4);
+}
+.process__title{
+  font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1.1rem;
+  letter-spacing:.04em;margin-bottom:.5rem;
+}
+.process__desc{font-size:.82rem;color:var(--smoke);line-height:1.65}
+
+/* ===== BENEFITS ===== */
+.benefits__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem}
+.benefit{
+  background:var(--raised);border:1px solid var(--border);border-radius:var(--r);
+  padding:1.75rem 1.5rem;position:relative;overflow:hidden;
+  transition:border-color .35s,transform .35s,box-shadow .35s;
+  opacity:0;transform:translateY(20px);
+  transition:opacity .5s,transform .4s,border-color .35s,box-shadow .35s;
+}
+.benefit.visible{opacity:1;transform:translateY(0)}
+.benefit:nth-child(2).visible{transition-delay:.1s}
+.benefit:nth-child(3).visible{transition-delay:.2s}
+.benefit:nth-child(4).visible{transition-delay:.3s}
+.benefit:hover{border-color:rgba(159,122,234,.38);transform:translateY(-5px);box-shadow:0 16px 50px rgba(0,0,0,.4)}
+.benefit::after{
+  content:'';position:absolute;inset-block-start:0;inset-inline:0;height:2px;
+  background:var(--g-main);opacity:0;transition:opacity .35s;border-radius:var(--r) var(--r) 0 0;
+}
+.benefit:hover::after{opacity:1}
+.benefit__icon{
+  width:48px;height:48px;border-radius:12px;
+  background:rgba(159,122,234,.1);border:1px solid rgba(159,122,234,.22);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.35rem;margin-bottom:1.1rem;
+}
+.benefit__title{font-family:'Rajdhani',sans-serif;font-weight:700;font-size:1rem;margin-bottom:.4rem}
+.benefit__desc{font-size:.79rem;color:var(--smoke);line-height:1.6}
+
+/* ===== CONTACT ===== */
+.contact__grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+.clink{
+  display:flex;align-items:center;gap:1rem;
+  background:var(--raised);border:1px solid var(--border);border-radius:12px;
+  padding:1.15rem 1.35rem;margin-bottom:.75rem;
+  transition:all .3s;
+}
+.clink:hover{border-color:rgba(159,122,234,.4);background:rgba(159,122,234,.05);transform:translateX(5px)}
+.clink__icon{
+  width:42px;height:42px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;
+}
+.clink__icon--tg{background:rgba(0,136,204,.12);border:1px solid rgba(0,136,204,.25)}
+.clink__icon--tt{background:rgba(255,0,80,.1);border:1px solid rgba(255,0,80,.25)}
+.clink__icon--ph{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25)}
+.clink__label{font-size:.68rem;text-transform:uppercase;letter-spacing:.12em;color:var(--smoke);margin-bottom:2px}
+.clink__val{font-weight:600;font-size:.92rem;color:var(--white)}
+
+.contact__box{
+  background:var(--raised);border:1px solid var(--border);
+  border-radius:var(--r);padding:2.25rem;position:relative;overflow:hidden;
+}
+.contact__box::before{
+  content:'';position:absolute;inset-block-start:0;inset-inline:0;
+  height:2px;background:var(--g-main);
+}
+.contact__box-title{
+  font-family:'Orbitron',monospace;font-weight:800;font-size:1.35rem;margin-bottom:.6rem;
+}
+.contact__box-desc{color:var(--mist);font-size:.88rem;line-height:1.65;margin-bottom:1.75rem}
+
+/* ===== FOOTER ===== */
+.footer{background:var(--surface);border-top:1px solid var(--border);padding:3.5rem 2.5rem 2rem}
+.footer__inner{max-width:1200px;margin-inline:auto}
+.footer__grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem;margin-bottom:2.5rem}
+.footer__logo{
+  font-family:'Orbitron',monospace;font-weight:900;font-size:1.65rem;
+  letter-spacing:.06em;background:var(--g-text);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  margin-bottom:.75rem;
+}
+.footer__tag{color:var(--smoke);font-size:.84rem;line-height:1.65;margin-bottom:1.5rem}
+.footer__socials{display:flex;gap:.6rem}
+.footer__soc{
+  width:38px;height:38px;border-radius:9px;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:1rem;
+  transition:all .3s;
+}
+.footer__soc:hover{
+  background:var(--g-main);border-color:transparent;
+  transform:translateY(-3px);box-shadow:0 8px 20px rgba(159,122,234,.4);
+}
+.footer__col-ttl{
+  font-size:.68rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--smoke);margin-bottom:1.1rem;
+}
+.footer__col-links{display:flex;flex-direction:column;gap:.6rem}
+.footer__col-links a{font-size:.84rem;color:var(--mist);transition:color .2s}
+.footer__col-links a:hover{color:var(--white)}
+.footer__bottom{
+  padding-top:2rem;border-top:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;
+}
+.footer__copy{font-size:.77rem;color:var(--smoke)}
+
+/* ===== MODAL ===== */
+.modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.84);backdrop-filter:blur(14px);
+  z-index:9000;display:flex;align-items:center;justify-content:center;padding:2rem;
+  opacity:0;visibility:hidden;transition:all .3s;
+}
+.modal-bg.open{opacity:1;visibility:visible}
+.modal{
+  background:var(--raised);border:1px solid rgba(159,122,234,.38);border-radius:18px;
+  padding:2.25rem;max-width:440px;width:100%;position:relative;
+  transform:scale(.88) translateY(14px);transition:transform .3s;
+}
+.modal-bg.open .modal{transform:scale(1) translateY(0)}
+.modal::before{
+  content:'';position:absolute;inset-block-start:0;inset-inline:0;
+  height:2px;background:var(--g-main);border-radius:18px 18px 0 0;
+}
+.modal__close{
+  position:absolute;top:1rem;right:1rem;
+  width:30px;height:30px;border-radius:7px;
+  background:rgba(255,255,255,.07);border:1px solid var(--border);
+  color:var(--mist);display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;line-height:1;transition:all .2s;
+}
+.modal__close:hover{background:rgba(255,255,255,.14);color:var(--white)}
+.modal__title{font-family:'Orbitron',monospace;font-weight:800;font-size:1.2rem;margin-bottom:4px}
+.modal__svc{font-size:.84rem;color:var(--ice);margin-bottom:1.2rem}
+.modal__hint{font-size:.81rem;color:var(--smoke);margin-bottom:1rem}
+.modal__opt{
+  display:flex;align-items:center;gap:1rem;padding:1rem 1.2rem;
+  border-radius:10px;background:rgba(255,255,255,.04);border:1px solid var(--border);
+  margin-bottom:.65rem;transition:all .25s;
+}
+.modal__opt:hover{
+  border-color:rgba(159,122,234,.42);background:rgba(159,122,234,.07);
+  transform:translateX(4px);
+}
+.modal__opt-icon{font-size:1.45rem}
+.modal__opt-name{font-weight:600;font-size:.9rem;display:block;margin-bottom:1px}
+.modal__opt-sub{font-size:.78rem;color:var(--smoke)}
+
+/* ===== ABOUT ===== */
+.about__grid{display:grid;grid-template-columns:1fr 1.15fr;gap:5rem;align-items:center}
+.about__avatar{
+  position:relative;display:flex;justify-content:center;
+}
+.about__ring{
+  width:260px;height:260px;border-radius:50%;
+  background:var(--g-main);padding:3px;
+  box-shadow:0 0 60px rgba(159,122,234,.25);
+  animation:ringPulse 3s ease infinite;
+}
+@keyframes ringPulse{0%,100%{box-shadow:0 0 60px rgba(159,122,234,.25)}50%{box-shadow:0 0 90px rgba(159,122,234,.45)}}
+.about__avatar-inner{
+  width:100%;height:100%;border-radius:50%;
+  background:linear-gradient(145deg,#1a1030,#0a0818);
+  display:flex;align-items:center;justify-content:center;
+  font-size:5rem;
+}
+.about__deco{
+  position:absolute;bottom:-12px;right:calc(50% - 160px);
+  background:var(--raised);border:1px solid rgba(159,122,234,.35);
+  border-radius:10px;padding:.6rem 1rem;
+  display:flex;align-items:center;gap:.6rem;
+  backdrop-filter:blur(10px);
+}
+.about__deco-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:#22c55e;box-shadow:0 0 10px #22c55e;
+  animation:blip 2s ease infinite;
+}
+.about__deco-txt{font-size:.75rem;font-weight:600;color:var(--mist)}
+.about__body{}
+.about__bio{
+  color:var(--mist);font-size:.96rem;line-height:1.78;margin-bottom:2rem;
+}
+.about__skills{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:.7rem;margin-bottom:2rem;
+}
+.about__skill{
+  display:flex;align-items:center;gap:.6rem;
+  background:var(--raised);border:1px solid var(--border);
+  border-radius:8px;padding:.65rem .9rem;
+  font-size:.82rem;font-weight:500;color:var(--mist);
+  transition:border-color .25s,color .25s;
+}
+.about__skill:hover{border-color:rgba(159,122,234,.4);color:var(--white)}
+.about__skill-icon{font-size:1.1rem}
+@media(max-width:900px){
+  .about__grid{grid-template-columns:1fr;gap:3rem}
+  .about__avatar{margin-bottom:1rem}
+  .about__skills{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:480px){
+  .about__skills{grid-template-columns:1fr}
+  .about__ring{width:200px;height:200px}
+}
+
+/* ===== KEYFRAMES ===== */
+@keyframes fadeDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:1100px){.pricing__grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:900px){
+  .contact__grid{grid-template-columns:1fr;gap:2rem}
+  .footer__grid{grid-template-columns:1fr;gap:2rem}
+  .portfolio__grid{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+  .pricing__grid{grid-template-columns:repeat(2,1fr)}
+  .portfolio__grid{grid-template-columns:1fr}
+  .nav__links{display:none}
+  .nav__ham{display:flex}
+  .nav__links.open{
+    display:flex;flex-direction:column;
+    position:absolute;top:100%;inset-inline:0;
+    background:rgba(7,7,10,.97);padding:1.5rem 2.5rem;
+    border-bottom:1px solid var(--border);gap:1.25rem;
+  }
+  .hero__stats{gap:2rem}
+  .section{padding:5rem 1.5rem}
+  .nav{padding:.9rem 1.25rem}
+}
+@media(max-width:480px){
+  .pricing__grid{grid-template-columns:1fr}
+  .hero__cta{flex-direction:column;align-items:center}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- ===== NAV ===== -->
+<nav class="nav" id="nav">
+  <a href="#hero" class="nav__logo">JEYRO0</a>
+  <ul class="nav__links" id="navLinks">
+    <li><a href="#about" data-i18n="nav.about">About</a></li>
+    <li><a href="#pricing" data-i18n="nav.pricing">Pricing</a></li>
+    <li><a href="#portfolio" data-i18n="nav.portfolio">Portfolio</a></li>
+    <li><a href="#contact" data-i18n="nav.contact">Contact</a></li>
+  </ul>
+  <div class="nav__right">
+    <div class="lang" role="group" aria-label="Language">
+      <button class="lang__btn active" onclick="setLang('en')">EN</button>
+      <button class="lang__btn" onclick="setLang('tr')">TR</button>
+      <button class="lang__btn" onclick="setLang('az')">AZ</button>
+    </div>
+    <button class="nav__ham" id="ham" aria-label="Menu" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+  <div class="hero__grid"></div>
+  <div class="hero__orb hero__orb--a"></div>
+  <div class="hero__orb hero__orb--b"></div>
+  <div class="hero__content">
+    <div class="hero__eyebrow" data-i18n="hero.eyebrow">Premium Video Editing</div>
+    <h1 class="hero__brand">JEYRO0</h1>
+    <p class="hero__tagline" data-i18n="hero.tagline">Professional Video Editor</p>
+    <p class="hero__desc" data-i18n="hero.desc">Cinematic edits, 3D animations and high-impact effects that make your content impossible to ignore.</p>
+    <div class="hero__cta">
+      <a href="#pricing" class="btn btn--primary" data-i18n="hero.cta1">Order Now ↗</a>
+      <a href="#portfolio" class="btn btn--ghost" data-i18n="hero.cta2">View Portfolio</a>
+    </div>
+    <div class="hero__stats">
+      <div class="stat"><div class="stat__num">2000+</div><div class="stat__label" data-i18n="hero.s1">Projects Done</div></div>
+      <div class="stat"><div class="stat__num">2000+</div><div class="stat__label" data-i18n="hero.s2">Happy Clients</div></div>
+      <div class="stat"><div class="stat__num">5+</div><div class="stat__label" data-i18n="hero.s3">Years Experience</div></div>
+    </div>
+  </div>
+  <div class="hero__scroll" aria-hidden="true"><span></span></div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section class="section" id="about">
+  <div class="wrap">
+    <div class="about__grid">
+
+      <div class="about__avatar">
+        <div class="about__ring">
+          <div class="about__avatar-inner">🎬</div>
+        </div>
+        <div class="about__deco">
+          <div class="about__deco-dot"></div>
+          <div class="about__deco-txt" data-i18n="ab.status">Available for orders</div>
+        </div>
+      </div>
+
+      <div class="about__body">
+        <p class="section__label" data-i18n="ab.label">About Me</p>
+        <h2 class="section__title" style="margin-bottom:1.25rem">
+          <span data-i18n="ab.title1">Hey, I'm</span> <em>JEYRO0</em>
+        </h2>
+        <p class="about__bio" data-i18n="ab.bio">
+          I've been editing videos for 5+ years and have worked on over 2000 projects. Whether it's a high-octane PUBG Mobile clip, a slick Valorant montage, a TikTok PK edit, a cinematic car video, a 3D masterpiece or a restaurant promo — I deliver premium results every time. Every project gets my full attention, no matter the size.
+        </p>
+
+        <div class="about__skills">
+          <div class="about__skill"><span class="about__skill-icon">🎮</span> PUBG Mobile</div>
+          <div class="about__skill"><span class="about__skill-icon">🔫</span> Valorant</div>
+          <div class="about__skill"><span class="about__skill-icon">📱</span> TikTok PK Edits</div>
+          <div class="about__skill"><span class="about__skill-icon">🚗</span> <span data-i18n="ab.sk.car">Car Edits</span></div>
+          <div class="about__skill"><span class="about__skill-icon">🎲</span> 3D Edits</div>
+          <div class="about__skill"><span class="about__skill-icon">🍽️</span> <span data-i18n="ab.sk.rest">Restaurant Edits</span></div>
+        </div>
+
+        <a href="#pricing" class="btn btn--primary" data-i18n="ab.cta">See Packages ↓</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRICING ===== -->
+<section class="section section--alt" id="pricing">
+  <div class="wrap">
+    <div class="section__hd">
+      <p class="section__label" data-i18n="pr.label">Pricing Plans</p>
+      <h2 class="section__title">Choose Your <em>Package</em></h2>
+      <p class="section__desc" data-i18n="pr.desc">From ready-made projects to full 3D cinematic edits — pick the one that fits your vision and budget.</p>
+    </div>
+    <div class="pricing__grid">
+
+      <div class="pcard">
+        <span class="pcard__icon">📦</span>
+        <div class="pcard__name" data-i18n="p1.name">Ready Project</div>
+        <div class="pcard__desc" data-i18n="p1.desc">Pre-made, ready-to-use edit projects</div>
+        <div class="pcard__price"><span class="pcard__cur">$</span><span class="pcard__num">15</span></div>
+        <ul class="pcard__feats">
+          <li data-i18n="p1.f1">Pre-made template</li>
+          <li data-i18n="p1.f2">Fast delivery</li>
+          <li data-i18n="p1.f3">1 revision</li>
+        </ul>
+        <button class="pcard__btn" onclick="openModal('p1.name','$15')" data-i18n="btn.order">Order Now →</button>
+      </div>
+
+      <div class="pcard">
+        <span class="pcard__icon">🎮</span>
+        <div class="pcard__name" data-i18n="p2.name">Simple Lobby Edits</div>
+        <div class="pcard__desc" data-i18n="p2.desc">Clean, minimal lobby-style edits</div>
+        <div class="pcard__price"><span class="pcard__cur">$</span><span class="pcard__num">18</span></div>
+        <ul class="pcard__feats">
+          <li data-i18n="p2.f1">Smooth transitions</li>
+          <li data-i18n="p2.f2">Color grading</li>
+          <li data-i18n="p2.f3">2 revisions</li>
+        </ul>
+        <button class="pcard__btn" onclick="openModal('p2.name','$18')" data-i18n="btn.order">Order Now →</button>
+      </div>
+
+      <div class="pcard">
+        <span class="pcard__icon">✨</span>
+        <div class="pcard__name" data-i18n="p3.name">Effects Edits</div>
+        <div class="pcard__desc" data-i18n="p3.desc">Edits with visual effects &amp; motion</div>
+        <div class="pcard__price"><span class="pcard__cur">$</span><span class="pcard__num">20</span></div>
+        <ul class="pcard__feats">
+          <li data-i18n="p3.f1">Visual effects (VFX)</li>
+          <li data-i18n="p3.f2">Motion graphics</li>
+          <li data-i18n="p3.f3">2 revisions</li>
+        </ul>
+        <button class="pcard__btn" onclick="openModal('p3.name','$20')" data-i18n="btn.order">Order Now →</button>
+      </div>
+
+      <div class="pcard">
+        <span class="pcard__icon">💥</span>
+        <div class="pcard__name" data-i18n="p4.name">Heavy Effects Edit</div>
+        <div class="pcard__desc" data-i18n="p4.desc">Advanced multi-layer effects editing</div>
+        <div class="pcard__price"><span class="pcard__cur">$</span><span class="pcard__num">25</span></div>
+        <ul class="pcard__feats">
+          <li data-i18n="p4.f1">Heavy VFX layers</li>
+          <li data-i18n="p4.f2">Custom animations</li>
+          <li data-i18n="p4.f3">3 revisions</li>
+        </ul>
+        <button class="pcard__btn" onclick="openModal('p4.name','$25')" data-i18n="btn.order">Order Now →</button>
+      </div>
+
+      <div class="pcard pcard--feat">
+        <div class="pcard__badge" data-i18n="feat.badge">🏆 Premium</div>
+        <span class="pcard__icon">🎬</span>
+        <div class="pcard__name" data-i18n="p5.name">3D Edits</div>
+        <div class="pcard__desc" data-i18n="p5.desc">Premium cinematic 3D video editing</div>
+        <div class="pcard__price"><span class="pcard__cur">$</span><span class="pcard__num">30</span></div>
+        <ul class="pcard__feats">
+          <li data-i18n="p5.f1">Full 3D animations</li>
+          <li data-i18n="p5.f2">Cinematic effects</li>
+          <li data-i18n="p5.f3">Premium VFX pack</li>
+          <li data-i18n="p5.f4">Unlimited revisions</li>
+        </ul>
+        <button class="pcard__btn" onclick="openModal('p5.name','$30')" data-i18n="btn.order">Order Now →</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== PORTFOLIO ===== -->
+<section class="section" id="portfolio">
+  <div class="wrap">
+    <div class="section__hd">
+      <p class="section__label" data-i18n="po.label">My Work</p>
+      <h2 class="section__title">Latest <em>Projects</em></h2>
+      <p class="section__desc" data-i18n="po.desc">A glimpse of recent edits — reach out via Telegram or TikTok to see the full portfolio.</p>
+    </div>
+    <div class="portfolio__grid">
+
+      <div class="pitem">
+        <div class="pitem__thumb">
+          <div class="pitem__play">▶</div>
+          <div class="pitem__tag" data-i18n="tag.3d">3D Edit</div>
+        </div>
+        <div class="pitem__info">
+          <div class="pitem__title" data-i18n="pr1.t">Cinematic 3D Montage</div>
+          <div class="pitem__meta">3D Edits · 2024</div>
+        </div>
+      </div>
+
+      <div class="pitem">
+        <div class="pitem__thumb">
+          <div class="pitem__play">▶</div>
+          <div class="pitem__tag" data-i18n="tag.fx">Effects Edit</div>
+        </div>
+        <div class="pitem__info">
+          <div class="pitem__title" data-i18n="pr2.t">Neon VFX Highlight</div>
+          <div class="pitem__meta">Effects Edits · 2024</div>
+        </div>
+      </div>
+
+      <div class="pitem">
+        <div class="pitem__thumb">
+          <div class="pitem__play">▶</div>
+          <div class="pitem__tag" data-i18n="tag.lb">Lobby Edit</div>
+        </div>
+        <div class="pitem__info">
+          <div class="pitem__title" data-i18n="pr3.t">Clean Lobby Montage</div>
+          <div class="pitem__meta">Simple Lobby · 2024</div>
+        </div>
+      </div>
+
+      <div class="pitem">
+        <div class="pitem__thumb">
+          <div class="pitem__play">▶</div>
+          <div class="pitem__tag" data-i18n="tag.hv">Heavy VFX</div>
+        </div>
+        <div class="pitem__info">
+          <div class="pitem__title" data-i18n="pr4.t">Full Effects Breakdown</div>
+          <div class="pitem__meta">Heavy Effects · 2024</div>
+        </div>
+      </div>
+
+      <div class="pitem">
+        <div class="pitem__thumb">
+          <div class="pitem__play">▶</div>
+          <div class="pitem__tag" data-i18n="tag.3d">3D Edit</div>
+        </div>
+        <div class="pitem__info">
+          <div class="pitem__title" data-i18n="pr5.t">3D Logo Reveal Intro</div>
+          <div class="pitem__meta">3D Edits · 2024</div>
+        </div>
+      </div>
+
+      <div class="pitem">
+        <div class="pitem__thumb">
+          <div class="pitem__play">▶</div>
+          <div class="pitem__tag" data-i18n="tag.fx">Effects Edit</div>
+        </div>
+        <div class="pitem__info">
+          <div class="pitem__title" data-i18n="pr6.t">Glitch Transition Pack</div>
+          <div class="pitem__meta">Effects Edits · 2024</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section class="section section--alt" id="contact">
+  <div class="wrap">
+    <div class="section__hd">
+      <p class="section__label" data-i18n="ct.label">Get In Touch</p>
+      <h2 class="section__title">Let's Work <em>Together</em></h2>
+    </div>
+    <div class="contact__grid">
+      <div>
+        <p style="color:var(--mist);font-size:.93rem;line-height:1.72;margin-bottom:1.75rem" data-i18n="ct.desc">Have a project in mind? Reach out via Telegram or phone — I get back to you fast.</p>
+        <a href="https://t.me/jeyro0" target="_blank" rel="noopener" class="clink">
+          <div class="clink__icon clink__icon--tg">✈️</div>
+          <div><div class="clink__label" data-i18n="ct.tglabel">Telegram</div><div class="clink__val">@jeyro0</div></div>
+        </a>
+        <a href="https://tiktok.com/@jeyro0" target="_blank" rel="noopener" class="clink">
+          <div class="clink__icon clink__icon--tt">🎵</div>
+          <div><div class="clink__label">TikTok</div><div class="clink__val">@jeyro0</div></div>
+        </a>
+        <a href="tel:+994513419831" class="clink">
+          <div class="clink__icon clink__icon--ph">📞</div>
+          <div><div class="clink__label" data-i18n="ct.phlabel">Phone</div><div class="clink__val">+994 51 341 98 31</div></div>
+        </a>
+      </div>
+      <div class="contact__box">
+        <h3 class="contact__box-title" data-i18n="ct.rtitle">Ready to order?</h3>
+        <p class="contact__box-desc" data-i18n="ct.rdesc">Choose a package, get in touch, and let's create something epic together. Fast turnaround, professional results — every time.</p>
+        <a href="https://t.me/jeyro0" target="_blank" rel="noopener" class="btn btn--primary btn--full" style="margin-bottom:.65rem" data-i18n="ct.ctg">↗ Order via Telegram</a>
+        <a href="tel:+994513419831" class="btn btn--ghost btn--full" data-i18n="ct.cph">📞 Call Now</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="footer__inner">
+    <div class="footer__grid">
+      <div>
+        <div class="footer__logo">JEYRO0</div>
+        <p class="footer__tag" data-i18n="ft.tag">Premium video editing for gamers and creators. Let's make your content legendary.</p>
+        <div class="footer__socials">
+          <a href="https://t.me/jeyro0" target="_blank" rel="noopener" class="footer__soc" title="Telegram">✈️</a>
+          <a href="https://tiktok.com/@jeyro0" target="_blank" rel="noopener" class="footer__soc" title="TikTok">🎵</a>
+          <a href="tel:+994513419831" class="footer__soc" title="Phone">📞</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer__col-ttl" data-i18n="ft.sv">Services</div>
+        <div class="footer__col-links">
+          <a href="#pricing" data-i18n="p1.name">Ready Project</a>
+          <a href="#pricing" data-i18n="p2.name">Simple Lobby Edits</a>
+          <a href="#pricing" data-i18n="p3.name">Effects Edits</a>
+          <a href="#pricing" data-i18n="p4.name">Heavy Effects Edit</a>
+          <a href="#pricing" data-i18n="p5.name">3D Edits</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer__col-ttl" data-i18n="ft.ct">Contact</div>
+        <div class="footer__col-links">
+          <a href="https://t.me/jeyro0" target="_blank">Telegram: @jeyro0</a>
+          <a href="https://tiktok.com/@jeyro0" target="_blank">TikTok: @jeyro0</a>
+          <a href="tel:+994513419831">+994 51 341 98 31</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span class="footer__copy">© 2024 JEYRO0. <span data-i18n="ft.r">All rights reserved.</span></span>
+      <span class="footer__copy" data-i18n="ft.made">Professional Video Editing</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ===== ORDER MODAL ===== -->
+<div class="modal-bg" id="modalBg" onclick="handleModalBgClick(event)">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal__close" onclick="closeModal()" aria-label="Close">×</button>
+    <h3 class="modal__title" id="modalTitle" data-i18n="m.title">Place Your Order</h3>
+    <p class="modal__svc" id="modalSvc">— —</p>
+    <p class="modal__hint" data-i18n="m.hint">Choose how you'd like to reach out:</p>
+    <a href="https://t.me/jeyro0" target="_blank" rel="noopener" class="modal__opt">
+      <span class="modal__opt-icon">✈️</span>
+      <div>
+        <span class="modal__opt-name">Telegram</span>
+        <span class="modal__opt-sub">@jeyro0 — fastest response</span>
+      </div>
+    </a>
+    <a href="tel:+994513419831" class="modal__opt">
+      <span class="modal__opt-icon">📞</span>
+      <div>
+        <span class="modal__opt-name" data-i18n="m.phone">Phone</span>
+        <span class="modal__opt-sub">+994 51 341 98 31</span>
+      </div>
+    </a>
+  </div>
+</div>
+
+<script>
+// ===== i18n =====
+const T = {
+  en:{
+    'nav.about':'About','nav.pricing':'Pricing','nav.portfolio':'Portfolio','nav.contact':'Contact',
+    'hero.eyebrow':'✦ Premium Video Editing',
+    'hero.tagline':'Professional Video Editor',
+    'hero.desc':'Cinematic edits, 3D animations and high-impact effects that make your content impossible to ignore.',
+    'hero.cta1':'Order Now ↗','hero.cta2':'View Portfolio',
+    'hero.s1':'Projects Done','hero.s2':'Happy Clients','hero.s3':'Years Experience',
+    'pr.label':'Pricing Plans',
+    'pr.desc':'From ready-made projects to full 3D cinematic edits — pick the one that fits your vision and budget.',
+    'p1.name':'Ready Project','p1.desc':'Pre-made, ready-to-use edit projects',
+    'p1.f1':'Pre-made template','p1.f2':'Fast delivery','p1.f3':'1 revision',
+    'p2.name':'Simple Lobby Edits','p2.desc':'Clean, minimal lobby-style edits',
+    'p2.f1':'Smooth transitions','p2.f2':'Color grading','p2.f3':'2 revisions',
+    'p3.name':'Effects Edits','p3.desc':'Edits with visual effects & motion',
+    'p3.f1':'Visual effects (VFX)','p3.f2':'Motion graphics','p3.f3':'2 revisions',
+    'p4.name':'Heavy Effects Edit','p4.desc':'Advanced multi-layer effects editing',
+    'p4.f1':'Heavy VFX layers','p4.f2':'Custom animations','p4.f3':'3 revisions',
+    'p5.name':'3D Edits','p5.desc':'Premium cinematic 3D video editing',
+    'p5.f1':'Full 3D animations','p5.f2':'Cinematic effects','p5.f3':'Premium VFX pack','p5.f4':'Unlimited revisions',
+    'feat.badge':'🏆 Premium','btn.order':'Order Now →',
+    'po.label':'My Work',
+    'po.desc':'A glimpse of recent edits — reach out via Telegram or TikTok to see the full portfolio.',
+    'tag.3d':'3D Edit','tag.fx':'Effects Edit','tag.lb':'Lobby Edit','tag.hv':'Heavy VFX',
+    'pr1.t':'Cinematic 3D Montage','pr2.t':'Neon VFX Highlight','pr3.t':'Clean Lobby Montage',
+    'pr4.t':'Full Effects Breakdown','pr5.t':'3D Logo Reveal Intro','pr6.t':'Glitch Transition Pack',
+    'ct.label':'Get In Touch',
+    'ct.desc':"Have a project in mind? Reach out via Telegram or phone — I get back to you fast.",
+    'ct.tglabel':'Telegram','ct.phlabel':'Phone / WhatsApp',
+    'ct.rtitle':'Ready to order?',
+    'ct.rdesc':"Choose a package, get in touch, and let's create something epic together. Fast turnaround, professional results — every time.",
+    'ct.ctg':'↗ Order via Telegram','ct.cph':'📞 Call Now',
+    'ft.tag':"Premium video editing for gamers and creators. Let's make your content legendary.",
+    'ft.sv':'Services','ft.ct':'Contact','ft.r':'All rights reserved.','ft.made':'Professional Video Editing',
+    'm.title':'Place Your Order',"m.hint":"Choose how you'd like to reach out:",'m.phone':'Phone',
+    'ab.label':'About Me','ab.title1':"Hey, I'm",
+    'ab.bio':"I've been editing videos for 5+ years and have completed over 2,000 projects. Whether it's a high-octane PUBG Mobile clip, a slick Valorant montage, a TikTok PK edit, a cinematic car video, a full 3D masterpiece or a restaurant promo — I deliver premium results every time. Every project gets my full attention, no matter the size.",
+    'ab.sk.car':'Car Edits','ab.sk.rest':'Restaurant Edits',
+    'ab.cta':'See Packages ↓','ab.status':'Available for orders',
+  },
+  tr:{
+    'nav.about':'Hakkında','nav.pricing':'Fiyatlar','nav.portfolio':'Portföy','nav.contact':'İletişim',
+    'hero.eyebrow':'✦ Premium Video Edit',
+    'hero.tagline':'Profesyonel Video Editör',
+    'hero.desc':'İçeriğinizi fark ettiren sinematik editler, 3D animasyonlar ve yüksek etkili efektler.',
+    'hero.cta1':'Sipariş Ver ↗','hero.cta2':'Portföyü Gör',
+    'hero.s1':'Tamamlanan Proje','hero.s2':'Mutlu Müşteri','hero.s3':'Yıl Deneyim',
+    'pr.label':'Fiyat Planları',
+    'pr.desc':'Hazır projelerden tam 3D sinematik editlere kadar — bütçenize ve vizyonunuza uygun paketi seçin.',
+    'p1.name':'Hazır Proje','p1.desc':'Kullanıma hazır edit projeleri',
+    'p1.f1':'Hazır şablon','p1.f2':'Hızlı teslimat','p1.f3':'1 revizyon',
+    'p2.name':'Sade Lobi Editleri','p2.desc':'Temiz ve sade lobi tarzı editler',
+    'p2.f1':'Akıcı geçişler','p2.f2':'Renk düzenlemesi','p2.f3':'2 revizyon',
+    'p3.name':'Effektli Editler','p3.desc':'Görsel efektlerle hazırlanan editler',
+    'p3.f1':'Görsel efektler (VFX)','p3.f2':'Hareket grafikleri','p3.f3':'2 revizyon',
+    'p4.name':'Daha Çok Effektli Edit','p4.desc':'Gelişmiş çok katmanlı efekt editi',
+    'p4.f1':'Yoğun VFX katmanları','p4.f2':'Özel animasyonlar','p4.f3':'3 revizyon',
+    'p5.name':'3D Editler','p5.desc':'Premium sinematik 3D video editi',
+    'p5.f1':'Tam 3D animasyonlar','p5.f2':'Sinematik efektler','p5.f3':'Premium VFX paketi','p5.f4':'Sınırsız revizyon',
+    'feat.badge':'🏆 Premium','btn.order':'Sipariş Ver →',
+    'po.label':'Çalışmalarım',
+    'po.desc':"Son editlerimin bir kısmı — daha fazla örnek için Telegram veya TikTok'tan ulaşın.",
+    'tag.3d':'3D Edit','tag.fx':'Effektli Edit','tag.lb':'Lobi Editi','tag.hv':'Yoğun VFX',
+    'pr1.t':'Sinematik 3D Montaj','pr2.t':'Neon VFX Highlight','pr3.t':'Temiz Lobi Montajı',
+    'pr4.t':'Full Efekt Showcase','pr5.t':'3D Logo Reveal Intro','pr6.t':'Glitch Geçiş Paketi',
+    'ct.label':'İletişim',
+    'ct.desc':'Aklınızda bir proje mi var? Telegram veya telefon üzerinden ulaşın — hızlıca geri dönerim.',
+    'ct.tglabel':'Telegram','ct.phlabel':'Telefon / WhatsApp',
+    'ct.rtitle':'Sipariş vermeye hazır mısın?',
+    'ct.rdesc':"Bir paket seç, benimle iletişime geç ve birlikte harika bir şey yapalım. Hızlı teslimat, profesyonel sonuçlar.",
+    'ct.ctg':'↗ Telegram ile Sipariş Ver','ct.cph':'📞 Şimdi Ara',
+    'ft.tag':'Oyunculara ve içerik üreticilerine özel premium video edit. İçeriğinizi efsaneleştirelim.',
+    'ft.sv':'Hizmetler','ft.ct':'İletişim','ft.r':'Tüm hakları saklıdır.','ft.made':'Profesyonel Video Edit',
+    'm.title':'Sipariş Ver','m.hint':'Nasıl iletişime geçmek istersiniz?','m.phone':'Telefon',
+    'ab.label':'Hakkımda','ab.title1':'Merhaba, ben',
+    'ab.bio':'5 yılı aşkın süredir video edit yapıyor, 2.000\'den fazla proje tamamlıyorum. PUBG Mobile klipleri, Valorant montajları, TikTok PK editleri, sinematik araba videoları, tam 3D editler veya restoran tanıtımları — her projeye maksimum özen gösteriyorum ve profesyonel sonuçlar çıkarıyorum.',
+    'ab.sk.car':'Araba Editleri','ab.sk.rest':'Restoran Editleri',
+    'ab.cta':'Paketleri Gör ↓','ab.status':'Sipariş alınıyor',
+  },
+  az:{
+    'nav.about':'Haqqımda','nav.pricing':'Qiymətlər','nav.portfolio':'Portfolio','nav.contact':'Əlaqə',
+    'hero.eyebrow':'✦ Premium Video Edit',
+    'hero.tagline':'Peşəkar Video Redaktor',
+    'hero.desc':'Məzmununuzu fərqləndirən kinematik editlər, 3D animasiyalar və yüksək effektli vizuallar.',
+    'hero.cta1':'Sifariş Ver ↗','hero.cta2':'Portfolioya Bax',
+    'hero.s1':'Tamamlanmış Layihə','hero.s2':'Razı Müştəri','hero.s3':'İl Təcrübə',
+    'pr.label':'Qiymət Planları',
+    'pr.desc':'Hazır layihələrdən tam 3D kinematik editlərə qədər — büdcənizə uyğun paketi seçin.',
+    'p1.name':'Hazır Layihə','p1.desc':'İstifadəyə hazır edit layihələri',
+    'p1.f1':'Hazır şablon','p1.f2':'Sürətli çatdırılma','p1.f3':'1 düzəliş',
+    'p2.name':'Sadə Lobi Editləri','p2.desc':'Təmiz və sadə lobi tərzi editlər',
+    'p2.f1':'Axıcı keçidlər','p2.f2':'Rəng korreksiyası','p2.f3':'2 düzəliş',
+    'p3.name':'Effektli Editlər','p3.desc':'Vizual effektlərlə hazırlanan editlər',
+    'p3.f1':'Vizual effektlər (VFX)','p3.f2':'Hərəkət qrafikləri','p3.f3':'2 düzəliş',
+    'p4.name':'Daha Çox Effektli Edit','p4.desc':'Çox qatlı inkişaf etmiş effekt editi',
+    'p4.f1':'Yoğun VFX qatları','p4.f2':'Xüsusi animasiyalar','p4.f3':'3 düzəliş',
+    'p5.name':'3D Editlər','p5.desc':'Premium kinematik 3D video editi',
+    'p5.f1':'Tam 3D animasiyalar','p5.f2':'Kinematik effektlər','p5.f3':'Premium VFX paketi','p5.f4':'Limitsiz düzəliş',
+    'feat.badge':'🏆 Premium','btn.order':'Sifariş Ver →',
+    'po.label':'İşlərim',
+    'po.desc':'Son editlərimdən bir nümunə — tam portfolio üçün Telegram və ya TikTok vasitəsilə əlaqə saxlayın.',
+    'tag.3d':'3D Edit','tag.fx':'Effektli Edit','tag.lb':'Lobi Editi','tag.hv':'Yoğun VFX',
+    'pr1.t':'Kinematik 3D Montaj','pr2.t':'Neon VFX Highlight','pr3.t':'Təmiz Lobi Montajı',
+    'pr4.t':'Tam Effekt Nümayişi','pr5.t':'3D Logo Reveal Intro','pr6.t':'Glitch Keçid Paketi',
+    'ct.label':'Əlaqə',
+    'ct.desc':'Ağlınızda layihə var? Telegram və ya telefon vasitəsilə əlaqə saxlayın — tez cavab verirəm.',
+    'ct.tglabel':'Telegram','ct.phlabel':'Telefon / WhatsApp',
+    'ct.rtitle':'Sifariş verməyə hazırsınız?',
+    'ct.rdesc':'Paket seçin, əlaqə saxlayın və birlikdə əla bir şey yaradaq. Sürətli çatdırılma, peşəkar nəticələr.',
+    'ct.ctg':'↗ Telegram ilə Sifariş Ver','ct.cph':'📞 İndi Zəng Et',
+    'ft.tag':'Oyunçular və məzmun yaradıcıları üçün premium video edit. Məzmununuzu əfsanəyə çevirək.',
+    'ft.sv':'Xidmətlər','ft.ct':'Əlaqə','ft.r':'Bütün hüquqlar qorunur.','ft.made':'Peşəkar Video Edit',
+    'm.title':'Sifariş Ver','m.hint':'Necə əlaqə saxlamaq istərdiniz?','m.phone':'Telefon',
+    'ab.label':'Haqqımda','ab.title1':'Salam, mən',
+    'ab.bio':'5 ildən artıqdır video edit ilə məşğulam və 2.000-dən çox layihə tamamlamışam. PUBG Mobile klipləri, Valorant montajları, TikTok PK editləri, kinematik avtomobil videoları, tam 3D editlər və ya restoran tanıtımları — hər layihəyə maksimum diqqət göstərirəm və peşəkar nəticələr çıxarıram.',
+    'ab.sk.car':'Avtomobil Editləri','ab.sk.rest':'Restoran Editləri',
+    'ab.cta':'Paketlərə Bax ↓','ab.status':'Sifarişlər qəbul edilir',
+  }
+};
+
+let lang = 'en';
+
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang__btn').forEach(b =>
+    b.classList.toggle('active', b.textContent.trim().toLowerCase() === l)
+  );
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (T[l][k] !== undefined) el.textContent = T[l][k];
+  });
+}
+
+// Modal
+function openModal(key, price) {
+  const name = T[lang][key] || key;
+  document.getElementById('modalSvc').textContent = name + ' — ' + price;
+  document.getElementById('modalBg').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handleModalBgClick(e) {
+  if (e.target === document.getElementById('modalBg')) closeModal();
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// Mobile nav
+function toggleNav() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+// Close nav on link click
+document.querySelectorAll('.nav__links a').forEach(a =>
+  a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'))
+);
+
+// Sticky nav
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('stuck', scrollY > 40);
+}, {passive: true});
+
+// Cursor glow
+const glow = document.getElementById('cursorGlow');
+window.addEventListener('mousemove', e => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
+}, {passive: true});
+
+// Staggered scroll reveal
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold: 0.1});
+
+document.querySelectorAll('.pcard, .pitem').forEach((el, i) => {
+  el.style.transitionDelay = (i % 5) * 80 + 'ms';
+  obs.observe(el);
+});
+
+// About section reveal
+const obsAbout = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+    }
+  });
+}, {threshold: 0.1});
+document.querySelectorAll('.about__grid > *').forEach((el, i) => {
+  el.style.cssText += ';opacity:0;transform:translateY(28px);transition:opacity .6s ease ' + (i * 0.15) + 's, transform .6s ease ' + (i * 0.15) + 's';
+  obsAbout.observe(el);
+});
+
+// Init language
+setLang('en');
+</script>
+</body>
+</html>
